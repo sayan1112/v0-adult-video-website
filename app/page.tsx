@@ -1,50 +1,80 @@
-import { createClient } from "@/lib/supabase/server"
-import { VideoGrid } from "@/components/video-grid"
+import Link from "next/link"
+import { Play } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { HeroSection } from "@/components/hero-section"
+import { Button } from "@/components/ui/button"
 import { CategoryNav } from "@/components/category-nav"
 import { SearchBar } from "@/components/search-bar"
-import { Play } from "lucide-react"
-import Link from "next/link"
+import { VideoGrid } from "@/components/video-grid"
+import { getVideos } from "@/lib/db"
+import { getSession } from "@/lib/auth"
+import Image from "next/image"
 
-export default async function HomePage() {
-  const supabase = await createClient()
+interface PageProps {
+  searchParams: Promise<{
+    category?: string
+    error?: string
+  }>
+}
 
-  // Fetch categories
-  const { data: categories } = await supabase.from("categories").select("*").order("name")
+export default async function HomePage({ searchParams }: PageProps) {
+  const session = await getSession();
+  const { category } = await searchParams
+  
+  // Fetch videos from local DB
+  const videos = await getVideos()
+  
+  // Filter client-side since our JSON DB is simple
+  const filteredVideos = category 
+    ? videos.filter(v => v.category?.toLowerCase() === category.toLowerCase())
+    : videos
 
-  // Fetch latest videos
-  const { data: videos } = await supabase.from("videos").select("*").order("created_at", { ascending: false }).limit(20)
+  // Extract unique categories and format for nav
+  const uniqueCategories = Array.from(new Set(videos.map((v) => v.category).filter(Boolean))) as string[]
+  const categories = uniqueCategories.map(cat => ({ 
+    id: cat, 
+    name: cat, 
+    slug: cat.toLowerCase(), // slug is usually the lowercased version 
+    description: null 
+  }))
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-primary">
-              <Play className="size-6 fill-primary-foreground text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold">VideoHub</span>
-          </Link>
-          <SearchBar />
-        </div>
-      </header>
+    <div className="min-h-screen bg-transparent">
+
 
       {/* Category Navigation */}
-      <CategoryNav categories={categories || []} />
+      <div className="z-40 w-full">
+         <CategoryNav categories={categories || []} />
+      </div>
 
       {/* Main Content */}
-      <main className="container py-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold">Latest Videos</h2>
-          <p className="text-muted-foreground">Check out our newest content</p>
+      <main className="container-tube py-8">
+        <HeroSection />
+
+        <div className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <span className="w-1 h-5 bg-primary rounded-full block"></span>
+              Featured Videos
+            </h2>
+            <Link href="/" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+              View All
+            </Link>
+          </div>
+          <VideoGrid videos={filteredVideos} />
         </div>
-        <VideoGrid videos={videos || []} />
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-8 mt-16">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2025 VideoHub. All rights reserved.</p>
+      <footer className="border-t py-12 mt-20 bg-muted/30">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2 mb-4">
+             <div className="relative size-8 rounded-lg overflow-hidden">
+                <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+             </div>
+            <span className="font-semibold text-foreground">BoysHub</span>
+          </div>
+          <p>© 2025 BoysHub. All rights reserved.</p>
         </div>
       </footer>
     </div>

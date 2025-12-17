@@ -1,0 +1,21 @@
+[
+  {
+    "id": "7xvan3r",
+    "name": "Sayan",
+    "email": "sayand9976266@gmail.com",
+    "password": "$2b$10$8Pv5qTqLOTTAIJZT.uzd2uuZWd/H6wpm70efPT/X.evG95ev5Uc2a",
+    "role": "admin",
+    "createdAt": "2025-12-17T14:49:58.547Z"
+  },
+  {
+    "id": "9lphx44",
+    "name": "sayan",
+    "email": "sayan.dutta2029@vedamsot.org",
+    "password": "$2b$10$FHnY5rUN3XD61tomCXZ5vOCcaJDD059QL5.ygH82UC/9s8sIbFnXG",
+    "role": "user",
+    "createdAt": "2025-12-17T15:12:37.891Z",
+    "tokens": 100,
+    "subscription": "free",
+    "watchHistory": []
+  }
+]

@@ -1,8 +1,13 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Eye, Clock } from "lucide-react"
+import { Eye, Clock, Play } from "lucide-react"
 import Image from "next/image"
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion"
+import { MouseEvent, useRef } from "react"
+import { VideoRating } from "./video-rating"
 
 interface Video {
   id: string
@@ -27,56 +32,70 @@ function formatDuration(seconds: number | null): string {
   return `${mins}:${secs.toString().padStart(2, "0")}`
 }
 
-function formatViews(views: number): string {
-  if (views >= 1000000) {
-    return `${(views / 1000000).toFixed(1)}M`
-  }
-  if (views >= 1000) {
-    return `${(views / 1000).toFixed(1)}K`
-  }
-  return views.toString()
-}
-
 export function VideoCard({ video }: VideoCardProps) {
   return (
-    <Link href={`/video/${video.id}`}>
-      <Card className="group overflow-hidden transition-all hover:ring-2 hover:ring-primary">
-        <div className="relative aspect-video overflow-hidden bg-muted">
-          {video.thumbnail_url ? (
-            <Image
-              src={video.thumbnail_url || "/placeholder.svg"}
-              alt={video.title}
-              fill
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
-              <span className="text-6xl">🎬</span>
-            </div>
-          )}
-          {video.duration && (
-            <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded bg-black/80 px-2 py-1 text-xs text-white">
-              <Clock className="size-3" />
-              {formatDuration(video.duration)}
-            </div>
-          )}
-        </div>
-        <CardContent className="p-4">
-          <h3 className="line-clamp-2 font-semibold text-balance group-hover:text-primary">{video.title}</h3>
-          {video.description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{video.description}</p>}
-          <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
-            {video.category && (
-              <Badge variant="secondary" className="capitalize">
-                {video.category}
-              </Badge>
-            )}
-            <div className="flex items-center gap-1">
-              <Eye className="size-3.5" />
-              {formatViews(video.views)}
-            </div>
+    <Link href={`/video/${video.id}`} className="group/card block w-full space-y-2">
+      {/* Thumbnail Container */}
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted shadow-sm ring-1 ring-border/50 group-hover/card:ring-primary/50 transition-all">
+        {video.thumbnail_url ? (
+          <Image
+            src={video.thumbnail_url || "/placeholder.svg"}
+            alt={video.title}
+            fill
+            className="object-cover transition-transform duration-500 will-change-transform group-hover/card:scale-105"
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+            <Play className="size-8 text-muted-foreground/50" />
           </div>
-        </CardContent>
-      </Card>
+        )}
+
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex gap-1">
+            <Badge variant="secondary" className="bg-black/60 backdrop-blur-md px-1.5 h-5 text-[10px] font-bold text-white border-0 rounded-sm">
+                HD
+            </Badge>
+        </div>
+
+        {/* Duration */}
+        {video.duration && (
+           <div className="absolute bottom-1.5 right-1.5 bg-black/80 rounded px-1.5 py-0.5 text-[10px] font-bold text-white">
+             {formatDuration(video.duration)}
+           </div>
+        )}
+
+        {/* Hover Progress Bar (Simulated) */}
+        <div className="absolute bottom-0 left-0 h-1 w-full bg-white/20 opacity-0 group-hover/card:opacity-100 transition-opacity">
+           <div className="h-full w-2/3 bg-primary" />
+        </div>
+        
+        {/* Play Overlay (Subtle) */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity bg-black/20">
+            <div className="rounded-full bg-black/50 p-3 backdrop-blur-sm">
+                 <Play className="size-5 fill-white text-white" />
+            </div>
+        </div>
+      </div>
+
+      {/* Details */}
+      <div className="space-y-1 px-0.5">
+        <h3 className="line-clamp-2 text-sm font-medium leading-tight text-foreground group-hover/card:text-primary transition-colors">
+          {video.title}
+        </h3>
+        
+        <div className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground/80">
+           <span>{Intl.NumberFormat('en-US', { notation: "compact" }).format(video.views)} views</span>
+           <span className="text-[10px]">•</span>
+           <span>2 days ago</span> {/* Mock time for now, or use video.created_at */}
+        </div>
+
+        {video.category && (
+            <div className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+               {video.category}
+            </div>
+        )}
+      </div>
     </Link>
   )
 }
+
