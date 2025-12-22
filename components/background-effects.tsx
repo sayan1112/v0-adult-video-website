@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
 const BACKGROUND_IMAGES = [
-  "/backgrounds/bg-1.png",
-  "/backgrounds/bg-2.png",
-  "/backgrounds/bg-3.png",
-  "/backgrounds/bg-4.png",
+  "/backgrounds/bg-anime-1.png",
+  "/backgrounds/bg-anime-2.png",
+  "/backgrounds/bg-anime-3.png",
+  "/backgrounds/bg-anime-4.jpg",
+  "/backgrounds/bg-anime-5.png",
 ]
 
 export function BackgroundEffects() {
