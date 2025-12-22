@@ -5,7 +5,11 @@
     "email": "sayand9976266@gmail.com",
     "password": "$2b$10$8Pv5qTqLOTTAIJZT.uzd2uuZWd/H6wpm70efPT/X.evG95ev5Uc2a",
     "role": "admin",
-    "createdAt": "2025-12-17T14:49:58.547Z"
+    "createdAt": "2025-12-17T14:49:58.547Z",
+    "watchHistory": [
+      "oqbt2vu",
+      "m9846o6"
+    ]
   },
   {
     "id": "9lphx44",

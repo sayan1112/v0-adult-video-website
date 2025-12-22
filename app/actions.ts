@@ -25,7 +25,7 @@ const formSchema = z.object({
   title: z.string().min(2),
   description: z.string().optional(),
   category: z.string().min(1),
-  video_url: z.string().min(1), 
+  video_url: z.string().optional(), 
   thumbnail_url: z.string().optional().or(z.literal("")),
 });
 
@@ -95,7 +95,7 @@ export async function uploadVideoAction(formData: FormData) {
         return { success: false, error: "You must be logged in to upload." };
     }
 
-    let videoUrl = formData.get('video_url') as string;
+    let videoUrl = formData.get('video_url') as string || '';
     const videoFile = formData.get('video_file') as File | null;
 
     // Handle File Upload
@@ -108,19 +108,27 @@ export async function uploadVideoAction(formData: FormData) {
             
             await writeFile(filePath, buffer);
             videoUrl = `/uploads/${fileName}`;
+            console.log('File uploaded successfully:', videoUrl);
         } catch (error) {
              console.error("File Upload Error:", error);
-             return { success: false, error: "Failed to save video file." };
+             return { success: false, error: "Failed to save video file: " + (error instanceof Error ? error.message : String(error)) };
         }
+    }
+
+    // Ensure we have a video URL
+    if (!videoUrl || videoUrl.trim() === '') {
+        return { success: false, error: "No video URL or file provided." };
     }
 
     const rawData = {
         title: formData.get('title') as string,
         description: (formData.get('description') as string) || undefined,
         category: formData.get('category') as string,
-        video_url: videoUrl,
+        video_url: videoUrl, // This is now guaranteed to be set
         thumbnail_url: (formData.get('thumbnail_url') as string) || undefined,
     }
+
+    console.log('Upload data:', { ...rawData, video_url: videoUrl });
 
     // Validate
     const validatedFields = formSchema.safeParse(rawData);
@@ -130,14 +138,15 @@ export async function uploadVideoAction(formData: FormData) {
         return { success: false, error: "Validation failed. Please check your inputs.", details: validatedFields.error.flatten() };
     }
 
-    const { title, description, category, video_url, thumbnail_url } = validatedFields.data;
+    const { title, description, category, thumbnail_url } = validatedFields.data;
+    // Use videoUrl directly since we've already validated it exists above
 
     try {
         await createVideo({
             title,
             description: description || null,
             category,
-            video_url,
+            video_url: videoUrl, // Use the videoUrl we validated earlier
             thumbnail_url: thumbnail_url || null,
             duration: null, 
             uploaderId: session.user.id

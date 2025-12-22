@@ -8,7 +8,16 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
 
-// ... metadata ...
+export const metadata: Metadata = {
+  title: "BoysHub - Your Video Streaming Platform",
+  description: "Watch and discover amazing videos on BoysHub",
+  generator: "v0.app",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
+}
+
 
 import { BackgroundEffects } from "@/components/background-effects"
 import { SiteHeader } from "@/components/site-header"

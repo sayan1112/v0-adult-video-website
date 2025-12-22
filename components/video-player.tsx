@@ -11,8 +11,8 @@ export function VideoPlayer({ videoUrl }: VideoPlayerProps) {
 
   if (isDirectVideo) {
     return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-t-lg bg-black">
-        <video controls className="size-full" controlsList="nodownload" preload="metadata">
+      <div className="relative w-full overflow-hidden rounded-t-lg bg-black" style={{ maxHeight: '500px' }}>
+        <video controls className="w-full h-auto" style={{ maxHeight: '500px' }} controlsList="nodownload" preload="metadata">
           <source src={videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
