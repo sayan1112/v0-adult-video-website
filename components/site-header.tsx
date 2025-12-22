@@ -20,6 +20,9 @@ export async function SiteHeader() {
         </Link>
         <div className="flex flex-1 items-center justify-end gap-4 md:flex-initial">
             <Link href="/upload">
+              <Button variant="ghost" size="icon" className="sm:hidden">
+                <span className="text-xl">+</span>
+              </Button>
               <Button variant="ghost" className="hidden sm:flex">Upload</Button>
             </Link>
             <SearchBar />

@@ -49,7 +49,7 @@ export function VideoGrid({ videos }: VideoGridProps) {
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+      className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4"
     >
       {videos.map((video) => (
         <motion.div key={video.id} variants={item}>
